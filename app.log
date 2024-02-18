@@ -1,0 +1,105 @@
+2024-01-14 06:40:55,243 - ERROR - Error loading dataset from Hugging Face Hub: expected str, bytes or os.PathLike object, not NoneType
+2024-01-14 06:47:13,318 - ERROR - Error loading dataset from Hugging Face Hub: expected str, bytes or os.PathLike object, not NoneType
+2024-01-14 07:00:35,462 - ERROR - Error loading dataset from Hugging Face Hub: expected str, bytes or os.PathLike object, not NoneType
+2024-01-14 07:11:14,490 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 08:24:46,120 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 08:29:36,674 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 08:37:14,852 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 08:47:29,014 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 08:55:33,716 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 09:22:27,438 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 10:20:09,672 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 11:19:29,221 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 11:31:24,437 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 11:46:45,995 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 11:50:49,601 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 12:01:08,723 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 12:05:12,552 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 12:05:26,720 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 12:09:54,483 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 12:19:42,614 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 12:20:20,394 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 12:25:17,952 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 12:56:24,670 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 13:06:25,814 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-14 13:45:19,096 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 09:25:17,189 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 09:27:18,016 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 09:50:25,211 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 09:55:11,836 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 09:58:57,096 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 10:12:02,058 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 10:36:23,166 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 11:57:10,420 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 11:57:48,691 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 11:57:52,336 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 11:57:52,346 - INFO - Detected the IOB or IOB2 labeling scheme.
+2024-01-15 11:57:52,907 - INFO - Spread 160 sentences across 160 samples, a 0.000000% increase. You can increase `model_max_length` or `marker_max_length` to decrease the number of samples, but recognize that longer samples are slower.
+2024-01-15 11:57:55,662 - INFO - Spread 40 sentences across 41 samples, a 2.500000% increase. You can increase `model_max_length` or `marker_max_length` to decrease the number of samples, but recognize that longer samples are slower.
+2024-01-15 11:58:03,052 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 11:58:29,437 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 11:58:38,890 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 11:58:44,809 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 11:58:44,818 - INFO - Detected the IOB or IOB2 labeling scheme.
+2024-01-15 11:58:45,566 - INFO - Spread 287 sentences across 288 samples, a 0.348432% increase. You can increase `model_max_length` or `marker_max_length` to decrease the number of samples, but recognize that longer samples are slower.
+2024-01-15 11:58:50,014 - INFO - Spread 72 sentences across 72 samples, a 0.000000% increase. You can increase `model_max_length` or `marker_max_length` to decrease the number of samples, but recognize that longer samples are slower.
+2024-01-15 11:58:57,288 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 12:04:31,003 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 12:08:09,704 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 12:14:04,930 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 12:19:19,752 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 12:20:03,591 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 12:21:25,883 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 12:21:31,500 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 12:22:49,167 - INFO - Dash is running on http://127.0.0.1:8050/
+
+2024-01-15 12:41:08,987 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 12:41:57,240 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 12:41:57,249 - INFO - Detected the IOB or IOB2 labeling scheme.
+2024-01-15 12:41:57,522 - WARNING - This SpanMarker model will ignore 2.222222% of all annotated entities in the train dataset. This is caused by the SpanMarkerModel maximum entity length of 8 words.
+These are the frequencies of the missed entities due to maximum entity length out of 45 total entities:
+- 1 missed entities with 10 words (2.222222%)
+2024-01-15 12:41:57,531 - INFO - Spread 8 sentences across 8 samples, a 0.000000% increase. You can increase `model_max_length` or `marker_max_length` to decrease the number of samples, but recognize that longer samples are slower.
+2024-01-15 12:41:58,894 - WARNING - This SpanMarker model won't be able to predict 7.142857% of all annotated entities in the evaluation dataset. This is caused by the SpanMarkerModel maximum entity length of 8 words.
+These are the frequencies of the missed entities due to maximum entity length out of 14 total entities:
+- 1 missed entities with 13 words (7.142857%)
+2024-01-15 12:41:58,903 - INFO - Spread 3 sentences across 3 samples, a 0.000000% increase. You can increase `model_max_length` or `marker_max_length` to decrease the number of samples, but recognize that longer samples are slower.
+2024-01-15 12:42:05,965 - WARNING - The underlying 'BertTokenizerFast' tokenizer nor 'SpanMarkerConfig' specify `model_max_length`: defaulting to 512 tokens.
+2024-01-15 12:59:45,558 - INFO - Dash is running on http://127.0.0.1:8050/
+
