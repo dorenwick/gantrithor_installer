@@ -1,17 +1,11 @@
-pyinstaller --windowed --hidden-import=tqdm Main.py
-pyinstaller --clean --windowed --hidden-import=tqdm Main.py
-pyinstaller Main.spec
-pyinstaller --windowed --noconfirm --copy-metadata="pyyaml" --hidden-import="pyyaml" --hidden-import="safetensors" --copy-metadata="safetensors" --hidden-import="pkg_resources.py2_warn" --hidden-import="googleapiclient" --hidden-import="apiclient" --hidden-import=pytorch --collect-data torch  --copy-metadata torch --copy-metadata tqdm --copy-metadata regex --copy-metadata requests --copy-metadata packaging --copy-metadata filelock --copy-metadata numpy --copy-metadata tokenizers --copy-metadata importlib_metadata --hidden-import="sklearn.utils._cython_blas" --hidden-import="sklearn.neighbors.typedefs" --hidden-import="sklearn.neighbors.quad_tree" --hidden-import="sklearn.tree" --hidden-import="sklearn.tree._utils" Main.py
+This repo is for constructing installers for the gantrithor
 
-pyinstaller --windowed --hidden-import="pkg_resources.py2_warn" \
---hidden-import="googleapiclient" --hidden-import="apiclient" \
---hidden-import="tensorflow" --hidden-import="pytorch" \
---collect-data="tensorflow" --collect-data="torch" \
---copy-metadata="tensorflow" --copy-metadata="torch" \
---copy-metadata="tqdm" --copy-metadata="regex" \
---copy-metadata="packaging" --copy-metadata="filelock" \
---copy-metadata="numpy" --copy-metadata="tokenizers" \
---copy-metadata="importlib_metadata" --hidden-import="sklearn.utils._cython_blas" \
---hidden-import="sklearn.neighbors.typedefs" --hidden-import="sklearn.neighbors.quad_tree" \
---hidden-import="sklearn.tree" --hidden-import="sklearn.tree._utils" \
-Main.py
+1: We run pyinstaller: pyinstaller Main.spec 2: We run the exe_coded.nsi file on the NSIS software 3: This makes the installer
+
+MISC: If we are going to be doing this a lot, we should make a script to take out the big dll files into the excluded area.
+
+We want to add some instructions here:
+
+Use the exe_coded file in D:\Gantrithor.zip
+
+That file goes into NSIS script program
