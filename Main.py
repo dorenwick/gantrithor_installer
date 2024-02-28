@@ -3,8 +3,10 @@ import os
 import re
 import sys
 import logging
-import time
 import traceback
+
+import requests
+from PyQt6.QtNetwork import QNetworkProxy
 
 from PyQt6.QtCore import pyqtSignal, QObject, Qt
 from PyQt6.QtGui import QPixmap
@@ -24,7 +26,6 @@ from GANTRITHOR.SETTINGS.SettingsGui import SettingsGui
 from GANTRITHOR.TEXT_ADAPTER.TEXTid2labelObserver import TEXTId2LabelObserver
 from GANTRITHOR.TEXT_GUI.TEXTgui import TEXTgui
 from GANTRITHOR.MIXINS.LicenseManager import LicenseManager
-import tracemalloc
 
 
 class Main(QObject, PathsAndDirectoriesMixin):
@@ -67,6 +68,14 @@ class Main(QObject, PathsAndDirectoriesMixin):
     The Main class is designed to provide a seamless user experience,
     integrating different modules of the application and ensuring smooth transitions and interactions.
 
+    Keys that work:
+    test_key
+    2b5515fc587a4a6081bc96277c3a4ba2
+    6e494cc8d714431d9f43459a13ea6f73
+    e94db46d91ec4545809dce61a51483e1
+    0020505d38f94ef8875c98917475c318
+    1fd955b7c4ca4477a5ed7184a8b1d0f3
+
     """
 
     reset_pipeline_signal = pyqtSignal()  # Define the signal
@@ -76,14 +85,15 @@ class Main(QObject, PathsAndDirectoriesMixin):
 
     def __init__(self):
         super().__init__()
-        self.setup_logging()  # Set up logging configuration
+        self.version = "Free"
         self.initialize_paths_and_directories()
+        # self.error_signal.error_occurred.connect(self.show_error_popup)
+        self.setup_logging()  # Set up logging configuration
         self.delete_database()
         self.factory = FactoryGuiSkeleton()  # Create an instance of your GUI factory
 
         self.main_window = self.create_main_window()  # Create the main window using the factory
         self.license_manager = LicenseManager(self.main_window)
-        self.is_commercial_version()
 
         # Add the 'ner' task frame to the central layout of the main window
         self.central_layout = self.factory.central_layout
@@ -92,16 +102,13 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.ner_task_frame, self.ner_task_frame_layout = self.factory.create_task_frame("ner")
         self.text_task_frame, self.text_task_frame_layout = self.factory.create_task_frame("text")
         self.img_task_frame, self.img_task_frame_layout = self.factory.create_task_frame("img")
-        self.object_task_frame, self.object_task_frame_layout = self.factory.create_task_frame("object")
+        # self.object_task_frame, self.object_task_frame_layout = self.factory.create_task_frame("object")
 
         # Create NER and TEXT buttons.
         self.ner_button, _ = self.factory.create_control_button("NER", width=100, height=24, font_size=12, toggle_option=True)
         self.text_button, _ = self.factory.create_control_button("TEXT", width=100, height=24, font_size=12, toggle_option=True)
         self.img_button, _ = self.factory.create_control_button("IMAGE", width=100, height=24, font_size=12, toggle_option=True)
-        self.obj_button, _ = self.factory.create_control_button("OBJECT", width=100, height=24, font_size=12, toggle_option=True)
-
-
-
+        # self.obj_button, _ = self.factory.create_control_button("OBJECT", width=100, height=24, font_size=12, toggle_option=True)
 
         # Connect to slot
         self.ner_gui = NERgui(self.factory)
@@ -127,8 +134,6 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.add_to_observer_img()
         self.add_to_observer_obj()
 
-        self.ner_gui.license_status = self.license_status
-        self.text_gui.license_status = self.license_status
 
         self.central_layout.addWidget(self.ner_gui)
         # self.central_layout.addWidget()
@@ -137,13 +142,13 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.ner_button.clicked.connect(lambda: self.switch_gui("ner"))
         self.text_button.clicked.connect(lambda: self.switch_gui("text"))
         self.img_button.clicked.connect(lambda: self.switch_gui("img"))
-        self.obj_button.clicked.connect(lambda: self.switch_gui("obj"))
+        # self.obj_button.clicked.connect(lambda: self.switch_gui("obj"))
 
         # Add NER and TEXT buttons to the top_frame layout
         self.factory.top_layout.addWidget(self.ner_button)
         self.factory.top_layout.addWidget(self.text_button)
         self.factory.top_layout.addWidget(self.img_button)
-        self.factory.top_layout.addWidget(self.obj_button)
+        # self.factory.top_layout.addWidget(self.obj_button)
 
         self.factory.top_layout.addStretch(1)  # Add stretch after the buttons
 
@@ -159,13 +164,20 @@ class Main(QObject, PathsAndDirectoriesMixin):
                                                                      tooltip_text="Settings",
                                                                      icon_path=self.settings_icon_path)
 
-        self.activate_button, _ = self.factory.create_control_button("Activate", width=100, height=24, font_size=12)
+        # Add version label to the top frame
+        self.version_label = QLabel(f"Version: {self.version}  ")
+        self.version_label.setStyleSheet("font-weight: bold; color: red;")
+        self.factory.top_layout.addWidget(self.version_label)
+        # self.factory.top_layout.addStretch(1)  # Add stretch to align the version label to the left
 
+        self.activate_button, _ = self.factory.create_control_button("Activate", width=100, height=24, font_size=12)
         self.activate_button.clicked.connect(self.license_manager.open_activation_dialog)
         self.factory.top_layout.addWidget(self.activate_button, 1)
 
         self.settings_button.clicked.connect(self.open_settings)
         self.settings_button.setStyleSheet("border: None")
+
+        self.is_commercial_version()
 
         self.directory_labels = {}
 
@@ -178,18 +190,33 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.obj_gui.load_model_gui.load_model_signal.connect(self.on_model_loaded)
         self.obj_gui.load_dataset_gui.load_dataset_signal.connect(self.on_dataset_loaded)
 
-
+        # self.divide_zero_error = 5 / 0
         # Add the third button to the top_frame layout
         self.factory.top_layout.addWidget(self.settings_button)
 
     def is_commercial_version(self):
         license_status = self.license_manager.load_and_decrypt()
         self.license_status = license_status
+        self.version = "Commercial" if license_status == "commercial" else "Free"
+        self.version_label.setText(f"Version: {self.version}")  # Update the version label text
+        if license_status == "commercial":
+            self.version_label.setStyleSheet("font-weight: bold; color: green;")
+        self.ner_gui.ner_singleton.license_status = self.license_status
+        self.text_gui.text_singleton.license_status = self.license_status
+        self.img_gui.img_singleton.license_status = self.license_status
+        self.obj_gui.obj_singleton.license_status = self.license_status
 
     def create_main_window(self):
         # Use the factory's method to create the main window
         light_blue = "#ADD8E6"
         return self.factory.create_main_window(background_color=light_blue)
+
+    def set_proxy(self, proxy_host, proxy_port):
+        proxy = QNetworkProxy()
+        proxy.setType(QNetworkProxy.ProxyType.HttpProxy)
+        proxy.setHostName(proxy_host)
+        proxy.setPort(proxy_port)
+        QNetworkProxy.setApplicationProxy(proxy)
 
     def add_directory_path_gui(self, directory_path, label_type):
         formatted_path = self.format_directory_path(directory_path, label_type)
@@ -257,7 +284,7 @@ class Main(QObject, PathsAndDirectoriesMixin):
             self.img_button.setChecked(True)  # Mark the button as checked
         elif gui_name == "obj":
             self.central_layout.addWidget(self.obj_gui)
-            self.obj_button.setChecked(True)  # Mark the button as checked
+            # self.obj_button.setChecked(True)  # Mark the button as checked
 
     def reset_button_styles(self):
         """
@@ -266,7 +293,7 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.ner_button.setChecked(False)
         self.text_button.setChecked(False)
         self.img_button.setChecked(False)
-        self.obj_button.setChecked(False)
+        # self.obj_button.setChecked(False)
 
     def show_message_dialog(self, title, message):
         """
@@ -381,8 +408,7 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.directory_labels = {}
         self.clearBottomLayout()
         self.add_to_observer()
-
-
+        self.is_commercial_version()
 
     def reset_pipeline_text(self):
         # Clear TEXT related components
@@ -401,7 +427,7 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.directory_labels = {}
         self.clearBottomLayout()
         self.add_to_observer_text()
-
+        self.is_commercial_version()
 
     def reset_pipeline_img(self):
         # Clear IMG related components
@@ -420,6 +446,7 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.directory_labels = {}
         self.clearBottomLayout()
         self.add_to_observer_img()
+        self.is_commercial_version()
 
     def reset_pipeline_obj(self):
         # Clear OBJ related components
@@ -437,6 +464,7 @@ class Main(QObject, PathsAndDirectoriesMixin):
         self.switch_gui("obj")
         self.directory_labels = {}
         self.add_to_observer_obj()
+        self.is_commercial_version()
 
 
     def clearBottomLayout(self):
@@ -455,16 +483,6 @@ class Main(QObject, PathsAndDirectoriesMixin):
     def clear_central_layout(self):
         self.clearLayout(self.central_layout)
 
-    def setup_logging(self):
-        logging.basicConfig(filename='error.log', level=logging.ERROR,
-                            format='%(asctime)s - %(levelname)s - %(message)s')
-
-    def global_exception_handler(self, exc_type, exc_value, exc_traceback):
-        """Global exception handler to display error popups and log errors."""
-        error_message = ''.join(traceback.format_exception(exc_type, exc_value, exc_traceback))
-        logging.error("Uncaught exception: %s", error_message)
-        self.show_error_popup(str(exc_value))  # Show the error popup directly
-
     def run(self):
         # Set the global exception handler
         sys.excepthook = self.global_exception_handler
@@ -473,7 +491,7 @@ class Main(QObject, PathsAndDirectoriesMixin):
             self.main_window.show()
         except Exception as e:
             logging.error("An error occurred: %s", str(e), exc_info=True)
-            self.show_error_popup(str(e))
+            # self.show_error_popup(str(e))
 
     def show_error_popup(self, error_message):
         msg_box = QMessageBox()
@@ -486,10 +504,6 @@ class Main(QObject, PathsAndDirectoriesMixin):
         response = msg_box.exec()
         if response == QMessageBox.StandardButton.Yes:
             self.send_error_report(error_message)
-
-    def send_error_report(self, error_message):
-        # Implement the logic to send the error report, e.g., via email or to a server
-        pass
 
 
 if __name__ == '__main__':
