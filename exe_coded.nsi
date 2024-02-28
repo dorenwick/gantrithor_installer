@@ -1,100 +1,82 @@
 !include "MUI2.nsh"
 !include "x64.nsh"
+!include "LogicLib.nsh"
 
-; Define the name of the installer
+Icon "icon_gantrithor_2.ico"
+!define MUI_UNICON "icon_gantrithor_2.ico"
 OutFile "GantrithorInstaller.exe"
-
-; Define the installer icon
-; Icon "app_icon.ico"
-
-; Define the version of the installer
 !define GantrithorVersion "1.0.0"
-
-; The text that shows up in the title bar
 Name "Gantrithor Installer v${GantrithorVersion}"
-
-; Request application privileges for Windows Vista and newer
 RequestExecutionLevel admin
 
-; Default installation directory logic
 Function .onInit
     ${If} ${RunningX64}
         StrCpy $INSTDIR "$PROGRAMFILES64\Gantrithor"
     ${Else}
         StrCpy $INSTDIR "$PROGRAMFILES\Gantrithor"
     ${EndIf}
+
+    ReadRegStr $R0 HKCU "Software\Gantrithor" "InstallDir"
+    ${If} $R0 != ""
+        ExecWait '"$R0\Uninstall.exe" /S'
+    ${EndIf}
 FunctionEnd
 
-; Pages
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
 
 Section "Install"
-
-    ; Set the output path to the selected installation directory
     SetOutPath $INSTDIR
-
-    ; Include Main directory and its contents, excluding 'excluded' directory
+    File "Gantrithor\Gantrithor.exe"	
     File /r /x "excluded" "Gantrithor\*.*"
-
-    ; Create the _internal directory
     SetOutPath $INSTDIR\_internal
     CreateDirectory $INSTDIR\_internal
-
-    ; Create the internal torch directory
     SetOutPath $INSTDIR\_internal\torch
     CreateDirectory $INSTDIR\_internal\torch
-
-    ; Copy contents from "ToMain" into the installed "_internal" directory
     CopyFiles /SILENT "$EXEDIR\Gantrithor\excluded\ToMain\*.*" "$INSTDIR\_internal"
-
-    ; Copy the entire torch folder into the installed "_internal" directory
     CopyFiles /SILENT "$EXEDIR\Gantrithor\excluded\torch\*.*" "$INSTDIR\_internal\torch"
-
-    ; Write the installation path to a configuration file or the registry
     WriteRegStr HKCU "Software\Gantrithor" "InstallDir" $INSTDIR
-
-    ; Create a shortcut on the desktop
-    CreateShortCut "$DESKTOP\Gantrithor.lnk" "$INSTDIR\Gantrithor.exe"
-
-    ; Create a shortcut in the start menu
+    SetOutPath $APPDATA\Gantrithor
+    CreateDirectory $APPDATA\Gantrithor\data
+    IfFileExists "$APPDATA\Gantrithor\data\*.*" 0 +2
+    RMDir /r "$APPDATA\Gantrithor\data"
+    CopyFiles /SILENT "$EXEDIR\Gantrithor\data\*.*" "$APPDATA\Gantrithor\data"
+    CreateShortCut "$DESKTOP\Gantrithor.lnk" "$INSTDIR\Gantrithor.exe" "" "icon_gantrithor_2.ico"
     CreateDirectory "$SMPROGRAMS\Gantrithor"
     CreateShortCut "$SMPROGRAMS\Gantrithor\Gantrithor.lnk" "$INSTDIR\Gantrithor.exe"
-
-    ; Use the system variable $APPDATA to get the application data directory
-    StrCpy $APPDATA_PATH "$APPDATA\Gantrithor\data"
-
-    ; $LOCALAPPDATA
-
-    ; Create the Gantrithor data directory
-    CreateDirectory $APPDATA_PATH
-
-    ; Move the data directory to the AppData directory
-    StrCpy $APPDATA_PATH "$APPDATA\Gantrithor\data"
-    CreateDirectory $APPDATA_PATH
-    CopyFiles /SILENT "$INSTDIR\data\*.*" $APPDATA_PATH
-    RMDir /r "$INSTDIR\data"
-
-    ; Write the uninstaller
     WriteUninstaller "$INSTDIR\Uninstall.exe"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gantrithor" "DisplayName" "Gantrithor"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gantrithor" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gantrithor" "DisplayIcon" "$INSTDIR\icon_gantrithor_2.ico"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gantrithor" "DisplayVersion" "${GantrithorVersion}"
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gantrithor" "NoModify" 1
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gantrithor" "NoRepair" 1
+
+    # Add Gantrithor to the Windows Firewall for both private and public connections
+    ${If} ${RunningX64}
+    	ExecWait '"$SYSDIR\Netsh.exe" advfirewall firewall add rule name="Gantrithor" dir=in action=allow program="$INSTDIR\Gantrithor.exe" enable=yes profile=private,public' $0	
+    ${Else}
+    	ExecWait '"$WINDIR\System32\Netsh.exe" advfirewall firewall add rule name="Gantrithor" dir=in action=allow program="$INSTDIR\Gantrithor.exe" enable=yes profile=private,public' $0
+    ${EndIf}
+	${If} $0 != 0
+    MessageBox MB_ICONEXCLAMATION "Failed to add Gantrithor to the Windows Firewall for both private and public connections. Please add it manually."
+    ${EndIf}
 
 SectionEnd
 
 Section "Uninstall"
-    ; Remove the installed files
     Delete "$INSTDIR\Gantrithor.exe"
-
-    ; Remove the Gantrithor data directory. We haven't implemented this in this version and should ask
-    ; the user if they want to do this before doing the uninstall.
-    ; RMDir /r "$APPDATA\Gantrithor"
-
-    ; Remove the shortcuts
     Delete "$DESKTOP\Gantrithor.lnk"
     Delete "$SMPROGRAMS\Gantrithor\Gantrithor.lnk"
     RMDir "$SMPROGRAMS\Gantrithor"
-
-    ; Remove the installation directory
     RMDir /r "$INSTDIR"
-
+    DeleteRegKey HKCU "Software\Gantrithor"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gantrithor"
+    # Remove Gantrithor from the Windows Firewall
+    ${If} ${RunningX64}
+        ExecWait '"$SYSDIR\Netsh.exe" advfirewall firewall delete rule name="Gantrithor" program="$INSTDIR\Gantrithor.exe"'
+    ${Else}
+        ExecWait '"$WINDIR\System32\Netsh.exe" advfirewall firewall delete rule name="Gantrithor" program="$INSTDIR\Gantrithor.exe"'
+    ${EndIf}		
 SectionEnd
